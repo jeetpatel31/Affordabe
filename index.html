@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Finance Calculator</title>
+<style>
+    #carContainer,
+#houseContainer {
+  display: none;
+}
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 80%;
+      margin: 20px auto;
+    }
+    .header {
+      text-align: center;
+      font-size: 24px;
+    }
+    .tab {
+      cursor: pointer;
+      padding: 10px;
+      display: inline-block;
+      margin-right: 5px;
+      background-color: #eee;
+    }
+    .tab.active {
+      background-color: #ddd;
+    }
+    .tab-content {
+      border: 1px solid #ddd;
+      padding: 20px;
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+    }
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    .button {
+      padding: 10px 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #e53935;
+    }
+  </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Affordabe</h1>
+        <select id="optionSelect" onchange="handleOptionChange()">
+          <option value="">Select an option...</option>
+          <option value="car">Car</option>
+          <option value="house">House</option>
+        </select>
+      </div>  
+
+<div class="container" id="carContainer" style="display:none;">
+    <div id="tabMonthlyPayment" class="tab active" onclick="openCarTab('monthlyPayment')">Monthly Payment</div>
+    <div id="tabAffordability" class="tab" onclick="openCarTab('affordability')">Affordability</div>
+    
+
+  <div id="monthlyPayment" class="tab-content active">
+    <!-- Monthly Payment Content -->
+    <div class="form-group">
+      <label for="vehiclePrice">Vehicle Price *</label>
+      <input type="number" id="vehiclePrice" placeholder="Enter vehicle price">
+    </div>
+    <div class="form-group">
+      <label for="downPayment">Down Payment</label>
+      <input type="number" id="downPayment" placeholder="Enter down payment">
+    </div>
+    <div class="form-group">
+      <label for="tradeInValue">Trade-in Value</label>
+      <input type="number" id="tradeInValue" placeholder="Enter trade-in value">
+    </div>
+    <div class="form-group">
+      <label for="salesTax">Estimated Sales Tax (%)</label>
+      <input type="number" id="salesTax" step="0.01" placeholder="Enter sales tax rate">
+    </div>
+    <div class="form-group">
+      <label for="interestRateMonthly">Estimated Interest Rate (%)</label>
+      <input type="number" id="interestRateMonthly" step="0.01" placeholder="Enter interest rate">
+    </div>
+    <div class="form-group">
+      <label for="loanTermMonthly">Loan Term (Months)</label>
+      <input type="number" id="loanTermMonthly" placeholder="Enter loan term in months">
+    </div>
+    <button class="button" onclick="calculateMonthlyPayment()">Estimate Payment</button>
+    <!-- Results will be inserted here -->
+    <div id="monthlyPaymentResult"></div>
+  </div>
+
+  <div id="affordability" class="tab-content">
+    <!-- Affordability Content -->
+    <div class="form-group">
+      <label for="monthlyIncome">Monthly Income *</label>
+      <input type="number" id="monthlyIncome" placeholder="Enter monthly income">
+    </div>
+    <div class="form-group">
+      <label for="downPaymentAfford">Down Payment</label>
+      <input type="number" id="downPaymentAfford" placeholder="Enter down payment">
+    </div>
+    <div class="form-group">
+      <label for="salesTaxAfford">Estimated Sales Tax (%)</label>
+      <input type="number" id="salesTaxAfford" step="0.01" placeholder="Enter sales tax rate">
+    </div>
+    <div class="form-group">
+      <label for="interestRateAfford">Estimated Interest Rate (%)</label>
+      <input type="number" id="interestRateAfford" step="0.01" placeholder="Enter interest rate">
+    </div>
+    <div class="form-group">
+      <label for="loanTermAfford">Loan Term (Months)</label>
+      <input type="number" id="loanTermAfford" placeholder="Enter loan term in months">
+    </div>
+    <button class="button" onclick="calculateAffordability()">Estimate Affordability</button>
+    <!-- Results will be inserted here -->
+    <div id="affordabilityResult"></div>
+  </div>
+</div>
+
+</div>
+
+<div class="container" id="houseContainer" style="display:none;">
+    <div id="tabHouseAffordability" class="tab active" onclick="openHouseTab('houseAffordability')">Affordability</div>
+    <div id="tabMortgagePayment" class="tab" onclick="openHouseTab('mortgagePayment')">Monthly Mortgage</div>
+  
+    <div id="houseAffordability" class="tab-content active">
+      <!-- House Affordability Content -->
+      <div class="form-group">
+        <label for="yearlyIncome">Yearly Household Income (before taxes) *</label>
+        <input type="number" id="yearlyIncome" placeholder="Enter yearly household income">
+      </div>
+      <div class="form-group">
+        <label for="totalMonthlyDebts">Total Monthly Debts (credit cards, loans, etc.)</label>
+        <input type="number" id="totalMonthlyDebts" placeholder="Enter total monthly debts">
+      </div>
+      <div class="form-group">
+        <label for="downPayment">Down Payment</label>
+        <input type="number" id="downPayment" placeholder="Enter down payment">
+      </div>
+      <div class="form-group">
+        <label for="loanTerm">Loan Term</label>
+        <input type="number" id="loanTerm" placeholder="Enter loan term in years">
+      </div>
+      <div class="form-group">
+        <label for="interestRate">Interest Rate (%)</label>
+        <input type="number" id="interestRate" step="0.01" placeholder="Enter annual interest rate">
+      </div>
+      <button class="button" onclick="calculatePurchaseBudget()">Estimate Purchase Budget</button>
+      <div id="purchaseBudgetResult"></div>
+    </div>
+  
+    <div id="mortgagePayment" class="tab-content">
+      <!-- Mortgage Payment Content -->
+      <div class="form-group">
+        <label for="homePrice">Home Price *</label>
+        <input type="number" id="homePrice" placeholder="Enter home price">
+      </div>
+      <div class="form-group">
+        <label for="downPaymentHouse">Down Payment</label>
+        <input type="number" id="downPaymentHouse" placeholder="Enter down payment">
+      </div>
+      <div class="form-group">
+        <label for="interestRateHouse">Annual Interest Rate (%)</label>
+        <input type="number" id="interestRateHouse" step="0.01" placeholder="Enter interest rate">
+      </div>
+      <div class="form-group">
+        <label for="loanTermHouse">Loan Term (Years)</label>
+        <input type="number" id="loanTermHouse" placeholder="Enter loan term in years">
+      </div>
+      <button class="button" onclick="calculateMortgagePayment()">Estimate Monthly Mortgage</button>
+      <div id="mortgagePaymentResult"></div>
+    </div>
+  </div>
+  
+
+<script>
+
+function openCarTab(tabName) {
+    // Hide both tab contents
+    document.getElementById("monthlyPayment").style.display = "none";
+    document.getElementById("affordability").style.display = "none";
+  
+    // Remove 'active' class from both tabs
+    document.getElementById("tabMonthlyPayment").classList.remove("active");
+    document.getElementById("tabAffordability").classList.remove("active");
+  
+    // Show the selected tab content and add 'active' class to the selected tab
+    document.getElementById(tabName).style.display = "block";
+    document.getElementById("tab" + tabName).classList.add("active");
+}
+
+function openHouseTab(tabName) {
+    // Hide both tab contents
+    document.getElementById("houseAffordability").style.display = "none";
+    document.getElementById("mortgagePayment").style.display = "none";
+
+    // Remove 'active' class from both tabs
+    document.getElementById("tabHouseAffordability").classList.remove("active");
+    document.getElementById("tabMortgagePayment").classList.remove("active");
+
+    // Show the selected tab content and add 'active' class to the selected tab
+    document.getElementById(tabName).style.display = "block";
+    document.getElementById("tab" + tabName).classList.add("active");
+}
+
+
+function handleOptionChange() {
+    var carContainer = document.getElementById('carContainer');
+    var houseContainer = document.getElementById('houseContainer');
+    var option = document.getElementById('optionSelect').value;
+
+    carContainer.style.display = 'none';
+    houseContainer.style.display = 'none';
+
+    if (option === 'car') {
+      carContainer.style.display = 'block';
+      openCarTab('monthlyPayment'); // Ensure the car tab is reset to default
+    } else if (option === 'house') {
+      houseContainer.style.display = 'block';
+      openHouseTab('houseAffordability'); // Ensure the house tab is reset to default
+    }
+}
+
+
+
+
+function calculateMonthlyPayment() {
+    // Ensure that you are getting numbers from the inputs, even if they are empty (which would return NaN)
+    const vehiclePrice = parseFloat(document.getElementById('vehiclePrice').value) || 0;
+    const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+    const interestRate = (parseFloat(document.getElementById('interestRateMonthly').value) || 0) / 100;
+    const loanTerm = parseFloat(document.getElementById('loanTermMonthly').value) || 0;
+    
+    const loanAmount = vehiclePrice - downPayment;
+    const monthlyRate = interestRate / 12;
+    // Ensure loan term is in months for the calculation
+    const totalPayments = loanTerm ;
+    const monthlyPayment = loanAmount * (monthlyRate / (1 - Math.pow(1 + monthlyRate, -totalPayments)));
+
+    document.getElementById('monthlyPaymentResult').innerHTML = `
+      <h4>Estimated Monthly Payment</h4>
+      <p>$${monthlyPayment.toFixed(2)}</p>
+    `;
+    document.getElementById('monthlyPaymentResult').style.display = 'block';
+}
+
+
+  function calculateAffordability() {
+    // Use the corrected IDs from your input elements
+    const monthlyIncome = document.getElementById('monthlyIncome').value;
+    const downPaymentAfford = document.getElementById('downPaymentAfford').value;
+    const salesTaxAfford = document.getElementById('salesTaxAfford').value / 100;
+    const interestRateAfford = document.getElementById('interestRateAfford').value / 100;
+    const loanTermAfford = document.getElementById('loanTermAfford').value;
+
+    // Calculate affordability based on the given formula
+    const monthlyPaymentAfford = monthlyIncome * 0.10; // 10% of monthly income
+    const totalLoanAmountAfford = (monthlyPaymentAfford / ((interestRateAfford / 12) / (1 - Math.pow(1 + interestRateAfford / 12, -loanTermAfford * 12)))) + parseFloat(downPaymentAfford);
+    const affordablePrice = totalLoanAmountAfford / (1 + salesTaxAfford); // Subtracting the sales tax to get the price before tax
+
+    document.getElementById('affordabilityResult').innerHTML = `
+      <h4>Affordable Car Purchase Price</h4>
+      <p>$${affordablePrice.toFixed(2)}</p>
+      <p>Total Loan Amount You Can Afford: $${totalLoanAmountAfford.toFixed(2)}</p>
+      <p>Based on a monthly payment of: $${monthlyPaymentAfford.toFixed(2)}</p>
+    `;
+    document.getElementById('affordabilityResult').style.display = 'block';
+  }
+
+
+  function calculatePurchaseBudget() {
+    const yearlyIncome = parseFloat(document.getElementById('yearlyIncome').value) || 0;
+    const totalMonthlyDebts = parseFloat(document.getElementById('totalMonthlyDebts').value) || 0;
+    const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+    const loanTermYears = parseFloat(document.getElementById('loanTerm').value) || 0;
+    const interestRateAnnual = parseFloat(document.getElementById('interestRate').value) || 0;
+
+    // Convert annual interest rate to monthly and yearly income to monthly
+    const interestRateMonthly = interestRateAnnual / 12 / 100;
+    const monthlyIncome = yearlyIncome / 12;
+
+    // Debt-to-income ratio of 36% for total debts including mortgage
+    const maxTotalMonthlyPayment = monthlyIncome * 0.36;
+
+    // If total monthly debts exceed 36% of monthly income, no budget is possible
+    if (totalMonthlyDebts >= maxTotalMonthlyPayment) {
+        document.getElementById('purchaseBudgetResult').innerHTML = `<p>Your total monthly debts exceed the threshold for affordability based on your income.</p>`;
+        return;
+    }
+
+    // Available monthly amount for mortgage payment
+    const availableForMortgage = maxTotalMonthlyPayment - totalMonthlyDebts;
+
+    // Estimate the mortgage amount using the annuity formula
+    const totalPayments = loanTermYears * 12;
+    const mortgageAmount = availableForMortgage / (interestRateMonthly / (1 - Math.pow(1 + interestRateMonthly, -totalPayments)));
+
+    // The purchase budget is the sum of the down payment and the mortgage amount
+    const purchaseBudget = mortgageAmount + downPayment;
+
+    document.getElementById('purchaseBudgetResult').innerHTML = `
+        <h4>Purchase Budget</h4>
+        <p>Your estimated purchase budget is: $${purchaseBudget.toFixed(2)}</p>
+        <p>Mortgage amount you could afford: $${mortgageAmount.toFixed(2)}</p>
+        <p>Based on a debt-to-income ratio of 36%.</p>
+    `;
+}
+
+
+  function calculateMortgagePayment() {
+    const homePrice = document.getElementById('homePrice').value;
+    const downPayment = document.getElementById('downPaymentHouse').value;
+    const interestRate = document.getElementById('interestRateHouse').value / 100;
+    const loanTerm = document.getElementById('loanTermHouse').value;
+    const loanAmount = homePrice - downPayment;
+    const monthlyRate = interestRate / 12;
+    const totalPayments = loanTerm * 12;
+    const monthlyPayment = loanAmount * (monthlyRate / (1 - Math.pow(1 + monthlyRate, -totalPayments)));
+
+    document.getElementById('mortgagePaymentResult').innerHTML = `
+      <h4>Estimated Monthly Mortgage Payment</h4>
+      <p>Principal & Interest: $${monthlyPayment.toFixed(2)}</p>
+    `;
+  }
+
+
+  handleOptionChange();
+
+</script>
+
+</body>
+</html>
